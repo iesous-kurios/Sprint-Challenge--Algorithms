@@ -96,8 +96,74 @@ class SortingRobot:
         """
         Sort the robot's list.
         """
-        # Fill this out
-        pass
+        # To keep moves at a minimum, will set the robot's light to "on"
+        # to indicate when swaps have been made
+        self.set_light_on()
+
+        # will start by moving robot all the way to the right, 
+        # then dropping the "None" it is carrying at the end of the list
+
+        while self.can_move_right():
+            self.move_right()  # move robot all the way to the right
+        
+        self.swap_item()  # swap items so None value is in last spot
+
+        # create iteration based on the light system
+        while self.light_is_on():
+
+            # start by setting the light back to off
+            self.set_light_off()
+
+            # make sure robot is as far left as it can go
+            while self.can_move_left():
+                self.move_left()
+
+            # create iteration as long as robot can move to the right
+            while self.can_move_right():
+                # have robot compare items
+                # swap out current item if lower than observed
+                if self.compare_item() == - 1:
+                    self.swap_item()
+                    self.set_light_on  # a swap occured, so switch light on
+                    self.move_right()  # move right once
+                
+                # if robot reaches 'None' value, it has reached end of list
+                # so swap the held value with the None value
+                elif self.compare_item() is None:
+                    self.swap_item()
+                    if self.can_move_left():  # check if robot can move left
+                        self.move_left()  # move left
+                        self.swap_item()  # swap item (this creates the new end of unsorted list)
+                        self.set_light_on()  # swap occured so switch light on
+                        if self.can_move_left():  # check if robot is at the first position in the list
+                            while self.can_move_right():  # while robot can move right
+                                self.move_right()  # move right
+                        else:  # if robot is at first position
+                            self.set_light_off()  # turn light off to indicate end of sorting
+                            while self.can_move_right():  # while robot can move right
+                                self.move_right()  # move right
+
+                else:
+                    self.move_right()  # move right one position
+            
+            # if robot finds none, pick it up and move further left
+            if self.compare_item() is None:
+                self.swap_item()
+                if self.can_move_left():
+                    self.move_left()
+                    self.swap_item()
+                    # set light to on since swap occured
+                    self.set_light_on()
+                
+            while self.can_move_left():
+                self.move_left()
+
+            # place final value
+            if self.compare_item() is None:
+                self.swap_item()
+
+
+
 
 
 if __name__ == "__main__":
